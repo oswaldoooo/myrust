@@ -1,4 +1,4 @@
-use bplustree::BPlusTree;
+use bplustree::{iter::RawSharedIter, BPlusTree};
 use rust_decimal::prelude::*;
 #[test]
 fn test_btree() {
@@ -19,16 +19,8 @@ fn test_btree() {
     ord.id = "10003";
     bpm.insert(kp, ord);
     let mut iter = bpm.raw_iter();
-    iter.seek_to_first();
-    let mut vnode = iter.next();
-    let mut i = 0;
-    while vnode.is_some() && i < bpm.len() {
-        let vnd = vnode.unwrap();
-        println!("price {} id {}", vnd.0, vnd.1.id);
-        vnode = iter.next();
-        i += 1;
-    }
-    println!("end");
+    printallnode(iter);
+    println!("start second");
     // let data = bpm.lookup(&kp, |value| *value);
 }
 #[derive(Clone)]
@@ -37,3 +29,17 @@ struct Order {
     pub id: &'static str,
 }
 impl Copy for Order {}
+
+fn printallnode(mut iter: RawSharedIter<'_, Decimal, Order, 128, 256>) {
+    iter.seek_to_first();
+
+    let mut vnode = iter.next();
+    let mut i = 0;
+    while vnode.is_some() {
+        let vnd = vnode.unwrap();
+        println!("price {} id {}", vnd.0, vnd.1.id);
+        vnode = iter.next();
+        i += 1;
+    }
+    println!("end");
+}
