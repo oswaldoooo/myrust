@@ -1,5 +1,7 @@
 #[path = "dep/mod.rs"]
 mod dep;
+#[path = "lib.rs"]
+mod lib;
 #[path = "tests/one_test.rs"]
 mod tests;
 #[macro_use]
